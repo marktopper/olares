@@ -21,9 +21,12 @@ export class DesktopApplication extends NormalApplication {
 		const appStore = useAppStore();
 		const tokenStore = useTokenStore();
 		const socketStore = useWebsocketManager2Store();
-		appStore.get_my_apps_info(
-			tokenStore.deviceInfo.device === DeviceType.MOBILE ? true : false
-		);
+		const isMobile = tokenStore.deviceInfo.device === DeviceType.MOBILE;
+		if (isMobile) {
+			appStore.DESKTOP_APP_X_NUM = 4;
+			appStore.DESKTOP_APP_Y_NUM = 4;
+		}
+		appStore.get_my_apps_info(isMobile);
 
 		socketStore.start();
 	};

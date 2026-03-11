@@ -312,7 +312,7 @@ const goto = (value: number) => {
 .q_vackgr_carousel {
 	background: transparent !important;
 	box-shadow: none !important;
-	height: 90% !important;
+	height: calc(100% - 200px) !important;
 	overflow: hidden !important;
 }
 
@@ -338,6 +338,7 @@ const goto = (value: number) => {
 	grid-template-columns: repeat(4, 25%);
 	grid-row-gap: 30px;
 	padding-top: 60px;
+	padding-bottom: 30px;
 	.pad-img {
 		width: 58px;
 		height: 58px;
