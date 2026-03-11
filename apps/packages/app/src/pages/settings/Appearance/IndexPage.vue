@@ -277,6 +277,238 @@
 				</bt-list>
 			</template>
 		</AdaptiveLayout>
+
+		<AdaptiveLayout>
+			<template v-slot:pc>
+				<bt-list class="q-mb-lg">
+					<div class="row justify-between select-radio-bg">
+						<div class="text-subtitle1 text-ink-1">
+							{{ t('desktop_widget') }}
+						</div>
+					</div>
+
+					<bt-separator
+						style="
+							margin-left: 20px;
+							margin-right: 20px;
+							width: calc(100% - 40px);
+						"
+					/>
+
+					<bt-form-item
+						:margin-top="false"
+						:width-separator="true"
+						:min-item-height="40"
+					>
+						<template v-slot:title>
+							<div class="text-subtitle2 text-ink-1">
+								{{ t('time_format') }}
+							</div>
+						</template>
+						<bt-select
+							v-model="widgetPrefsStore.timeFormat"
+							:options="timeFormatOptions"
+							@update:modelValue="widgetPrefsStore.save()"
+						/>
+					</bt-form-item>
+
+					<bt-form-item
+						:margin-top="false"
+						:width-separator="true"
+						:min-item-height="40"
+					>
+						<template v-slot:title>
+							<div class="text-subtitle2 text-ink-1">
+								{{ t('date_format') }}
+							</div>
+						</template>
+						<bt-select
+							v-model="widgetPrefsStore.dateFormat"
+							:options="dateFormatOptions"
+							@update:modelValue="widgetPrefsStore.save()"
+						/>
+					</bt-form-item>
+
+					<bt-separator
+						style="
+							margin-left: 20px;
+							margin-right: 20px;
+							width: calc(100% - 40px);
+						"
+					/>
+
+					<div class="text-body2 text-ink-2 q-px-lg q-pt-md q-pb-sm">
+						{{ t('system_indicators') }}
+					</div>
+
+					<bt-form-item
+						:margin-top="false"
+						:width-separator="true"
+						:min-item-height="40"
+					>
+						<template v-slot:title>
+							<div class="text-subtitle2 text-ink-1">
+								{{ t('show_cpu') }}
+							</div>
+						</template>
+						<bt-switch
+							size="sm"
+							truthy-track-color="light-blue-default"
+							v-model="widgetPrefsStore.showCpu"
+							@update:model-value="widgetPrefsStore.save()"
+						/>
+					</bt-form-item>
+
+					<bt-form-item
+						:margin-top="false"
+						:width-separator="true"
+						:min-item-height="40"
+					>
+						<template v-slot:title>
+							<div class="text-subtitle2 text-ink-1">
+								{{ t('show_disk') }}
+							</div>
+						</template>
+						<bt-switch
+							size="sm"
+							truthy-track-color="light-blue-default"
+							v-model="widgetPrefsStore.showDisk"
+							@update:model-value="widgetPrefsStore.save()"
+						/>
+					</bt-form-item>
+
+					<bt-form-item
+						:margin-top="false"
+						:width-separator="true"
+						:min-item-height="40"
+					>
+						<template v-slot:title>
+							<div class="text-subtitle2 text-ink-1">
+								{{ t('show_memory') }}
+							</div>
+						</template>
+						<bt-switch
+							size="sm"
+							truthy-track-color="light-blue-default"
+							v-model="widgetPrefsStore.showMemory"
+							@update:model-value="widgetPrefsStore.save()"
+						/>
+					</bt-form-item>
+
+					<bt-separator
+						style="
+							margin-left: 20px;
+							margin-right: 20px;
+							width: calc(100% - 40px);
+						"
+					/>
+
+					<bt-form-item
+						:margin-top="false"
+						:width-separator="false"
+						:min-item-height="40"
+					>
+						<template v-slot:title>
+							<div class="text-subtitle2 text-ink-1">
+								{{ t('text_shadow') }}
+							</div>
+						</template>
+						<bt-switch
+							size="sm"
+							truthy-track-color="light-blue-default"
+							v-model="widgetPrefsStore.showShadow"
+							@update:model-value="widgetPrefsStore.save()"
+						/>
+					</bt-form-item>
+				</bt-list>
+			</template>
+			<template v-slot:mobile>
+				<div class="text-subtitle2-m text-ink-1 q-mt-lg q-mb-sm">
+					{{ t('desktop_widget') }}
+				</div>
+				<div class="mobile-items-list" style="padding-bottom: 4px; padding-top: 4px">
+					<bt-form-item
+						:title="t('time_format')"
+						:margin-top="false"
+						:width-separator="true"
+					>
+						<bt-select
+							v-model="widgetPrefsStore.timeFormat"
+							:options="timeFormatOptions"
+							@update:modelValue="widgetPrefsStore.save()"
+						/>
+					</bt-form-item>
+
+					<bt-form-item
+						:title="t('date_format')"
+						:margin-top="false"
+						:width-separator="true"
+					>
+						<bt-select
+							v-model="widgetPrefsStore.dateFormat"
+							:options="dateFormatOptions"
+							@update:modelValue="widgetPrefsStore.save()"
+						/>
+					</bt-form-item>
+
+					<bt-form-item
+						:title="t('show_cpu')"
+						:margin-top="false"
+						:width-separator="true"
+						:min-item-height="40"
+					>
+						<bt-switch
+							size="sm"
+							truthy-track-color="light-blue-default"
+							v-model="widgetPrefsStore.showCpu"
+							@update:model-value="widgetPrefsStore.save()"
+						/>
+					</bt-form-item>
+
+					<bt-form-item
+						:title="t('show_disk')"
+						:margin-top="false"
+						:width-separator="true"
+						:min-item-height="40"
+					>
+						<bt-switch
+							size="sm"
+							truthy-track-color="light-blue-default"
+							v-model="widgetPrefsStore.showDisk"
+							@update:model-value="widgetPrefsStore.save()"
+						/>
+					</bt-form-item>
+
+					<bt-form-item
+						:title="t('show_memory')"
+						:margin-top="false"
+						:width-separator="true"
+						:min-item-height="40"
+					>
+						<bt-switch
+							size="sm"
+							truthy-track-color="light-blue-default"
+							v-model="widgetPrefsStore.showMemory"
+							@update:model-value="widgetPrefsStore.save()"
+						/>
+					</bt-form-item>
+
+					<bt-form-item
+						:title="t('text_shadow')"
+						:margin-top="false"
+						:width-separator="false"
+						:min-item-height="40"
+					>
+						<bt-switch
+							size="sm"
+							truthy-track-color="light-blue-default"
+							v-model="widgetPrefsStore.showShadow"
+							@update:model-value="widgetPrefsStore.save()"
+						/>
+					</bt-form-item>
+				</div>
+			</template>
+		</AdaptiveLayout>
 	</bt-scroll-area>
 </template>
 
@@ -287,6 +519,7 @@ import {
 	useBackgroundStore,
 	themeOptions
 } from 'src/stores/settings/background';
+import { useWidgetPreferencesStore } from 'src/stores/desktop/widgetPreferences';
 import WallpaperImage from 'src/components/settings/WallpaperImage.vue';
 import PageTitleComponent from 'src/components/settings/PageTitleComponent.vue';
 import AdaptiveLayout from 'src/components/settings/AdaptiveLayout.vue';
@@ -302,11 +535,23 @@ import { useI18n } from 'vue-i18n';
 import BtList from 'src/components/settings/base/BtList.vue';
 
 const backgroundStore = useBackgroundStore();
+const widgetPrefsStore = useWidgetPreferencesStore();
 const selectBackgroundMode = ref(BackgroundMode.desktop);
 
 const { t } = useI18n();
 
 const themeOptionsRef = ref(themeOptions);
+
+const timeFormatOptions = computed(() => [
+	{ label: t('time_format_24h'), value: '24h' },
+	{ label: t('time_format_12h'), value: '12h' }
+]);
+
+const dateFormatOptions = [
+	{ label: 'YYYY/MM/DD', value: 'YYYY/MM/DD' },
+	{ label: 'MM/DD/YYYY', value: 'MM/DD/YYYY' },
+	{ label: 'MM/DD/YY', value: 'MM/DD/YY' }
+];
 
 const ok = async (response: any) => {
 	if (selectBackgroundMode.value == BackgroundMode.desktop) {
@@ -349,6 +594,7 @@ const deletePicture = async (item: string) => {
 
 onMounted(async () => {
 	backgroundStore.get_wallpaper();
+	widgetPrefsStore.init();
 });
 
 const desktopImgUrl = computed(() => {
