@@ -1,20 +1,28 @@
 <template>
 	<div class="description_box">
 		<div class="description_weather">
-			<div class="date">{{ state.month }}<span>/</span>{{ state.day }}</div>
+			<div class="date" :class="{ 'no-shadow': !widgetPrefsStore.showShadow }">
+				{{ state.month }}<span>/</span>{{ state.day }}
+			</div>
 			<div class="year_week">
-				<div class="week q-mb-xs">
+				<div
+					class="week q-mb-xs"
+					:class="{ 'no-shadow': !widgetPrefsStore.showShadow }"
+				>
 					{{ state.week }}
 				</div>
-				<div class="year">
-					{{ state.year }}
+				<div
+					class="year"
+					:class="{ 'no-shadow': !widgetPrefsStore.showShadow }"
+				>
+					{{ state.displayYear }}
 				</div>
 			</div>
 		</div>
-		<div class="description_thickness">
+		<div v-if="visibleUsages.length > 0" class="description_thickness">
 			<div
 				class="description_track"
-				v-for="(item, index) in moniterStore.usages"
+				v-for="(item, index) in visibleUsages"
 				:key="`d` + index"
 			>
 				<q-knob
@@ -26,7 +34,10 @@
 					:color="item.color"
 					track-color="grey-4"
 				/>
-				<div class="description_track_txt">
+				<div
+					class="description_track_txt"
+					:class="{ 'no-shadow': !widgetPrefsStore.showShadow }"
+				>
 					<p class="text-uppercase">{{ item.name }}</p>
 					<p>{{ item.ratio }}%</p>
 				</div>
@@ -35,11 +46,13 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue';
 
 import { useMonitorStore } from '../../../stores/desktop/monitor';
+import { useWidgetPreferencesStore } from '../../../stores/desktop/widgetPreferences';
 
 const moniterStore = useMonitorStore();
+const widgetPrefsStore = useWidgetPreferencesStore();
 const watchTimeTask = ref();
 const state = reactive({
 	date: '',
@@ -48,14 +61,24 @@ const state = reactive({
 	year: '',
 	month: '',
 	day: '',
+	displayYear: '',
 	showIndex: 0,
 	isAM: false,
 	show: true
 });
 
+const visibleUsages = computed(() => {
+	return moniterStore.usages.filter((item) => {
+		if (item.name === 'cpu') return widgetPrefsStore.showCpu;
+		if (item.name === 'disk') return widgetPrefsStore.showDisk;
+		if (item.name === 'memory') return widgetPrefsStore.showMemory;
+		return true;
+	});
+});
+
 const getTime = async () => {
 	var myDate = new Date();
-	let hour = myDate.getHours().toString().padStart(2, '0');
+	let hours = myDate.getHours();
 	let minutes = myDate.getMinutes().toString().padStart(2, '0');
 	let year = myDate.getFullYear().toString();
 	let month = (myDate.getMonth() + 1).toString().padStart(2, '0');
@@ -65,8 +88,12 @@ const getTime = async () => {
 	state.year = year;
 	state.month = month;
 	state.day = day;
-	state.time = hour + ':' + minutes;
-	state.isAM = myDate.getHours() <= 12;
+	state.time = hours.toString().padStart(2, '0') + ':' + minutes;
+	state.isAM = hours < 12;
+
+	state.displayYear =
+		widgetPrefsStore.dateFormat === 'MM/DD/YY' ? year.slice(-2) : year;
+
 	state.show = false;
 	await nextTick();
 	state.show = true;
@@ -97,6 +124,7 @@ const watchTime = () => {
 };
 
 onMounted(() => {
+	widgetPrefsStore.init();
 	watchTime();
 	moniterStore.loadMonitor();
 });
@@ -131,6 +159,10 @@ onUnmounted(() => {
 			height: 100%;
 			font-size: 64px;
 			font-weight: 700;
+			text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.16);
+			&.no-shadow {
+				text-shadow: none;
+			}
 			span {
 				color: rgba(255, 255, 255, 0.5);
 			}
@@ -146,11 +178,19 @@ onUnmounted(() => {
 			.year {
 				font-size: 18px;
 				line-height: 22px;
+				text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.16);
+				&.no-shadow {
+					text-shadow: none;
+				}
 			}
 			.week {
 				font-size: 18px;
 				font-weight: 500;
 				line-height: 22px;
+				text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.16);
+				&.no-shadow {
+					text-shadow: none;
+				}
 			}
 		}
 	}
@@ -182,6 +222,9 @@ onUnmounted(() => {
 				align-items: start;
 				justify-content: space-around;
 				flex-direction: column;
+				&.no-shadow {
+					text-shadow: none;
+				}
 			}
 		}
 	}

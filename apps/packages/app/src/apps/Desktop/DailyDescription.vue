@@ -1,20 +1,39 @@
 <template>
 	<div class="description_box">
 		<div class="description_weather">
-			<div class="description_time">{{ state.time }}</div>
+			<div
+				class="description_time"
+				:class="{ 'no-shadow': !widgetPrefsStore.showShadow }"
+			>
+				{{ state.time
+				}}<span v-if="widgetPrefsStore.timeFormat === '12h'" class="description_ampm">{{
+					state.ampm
+				}}</span>
+			</div>
 			<div class="description_daily">
 				<div class="description_singapore">
-					<p class="description_week">{{ state.week }}</p>
-					<p class="description_day">
+					<p
+						class="description_week"
+						:class="{ 'no-shadow': !widgetPrefsStore.showShadow }"
+					>
+						{{ state.week }}
+					</p>
+					<p
+						class="description_day"
+						:class="{ 'no-shadow': !widgetPrefsStore.showShadow }"
+					>
 						{{ state.date }}
 					</p>
 				</div>
 			</div>
 		</div>
-		<div class="description_thickness">
+		<div
+			v-if="visibleUsages.length > 0"
+			class="description_thickness"
+		>
 			<div
 				class="description_track"
-				v-for="(item, index) in monitorStore.usages"
+				v-for="(item, index) in visibleUsages"
 				:key="`d` + index"
 			>
 				<q-knob
@@ -26,7 +45,10 @@
 					:color="item.color"
 					track-color="grey-4"
 				></q-knob>
-				<div class="description_track_txt">
+				<div
+					class="description_track_txt"
+					:class="{ 'no-shadow': !widgetPrefsStore.showShadow }"
+				>
 					<p class="text-uppercase">{{ item.name }}</p>
 					<p>{{ item.ratio }}%</p>
 				</div>
@@ -35,32 +57,61 @@
 	</div>
 </template>
 <script lang="ts" setup>
-import { ref, reactive, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue';
 
 import { useMonitorStore } from '../../stores/desktop/monitor';
+import { useWidgetPreferencesStore } from '../../stores/desktop/widgetPreferences';
 
 const monitorStore = useMonitorStore();
+const widgetPrefsStore = useWidgetPreferencesStore();
 const watchTimeTask = ref();
 const state = reactive({
 	date: '',
 	time: '',
 	week: '',
+	ampm: '',
 	showIndex: 0,
 	isAM: false,
 	show: true
 });
 
+const visibleUsages = computed(() => {
+	return monitorStore.usages.filter((item) => {
+		if (item.name === 'cpu') return widgetPrefsStore.showCpu;
+		if (item.name === 'disk') return widgetPrefsStore.showDisk;
+		if (item.name === 'memory') return widgetPrefsStore.showMemory;
+		return true;
+	});
+});
+
 const getTime = async () => {
 	var myDate = new Date();
-	let hour = myDate.getHours().toString().padStart(2, '0');
+	let hours = myDate.getHours();
 	let minutes = myDate.getMinutes().toString().padStart(2, '0');
 	let year = myDate.getFullYear().toString();
 	let month = (myDate.getMonth() + 1).toString().padStart(2, '0');
 	let day = myDate.getDate().toString().padStart(2, '0');
 
-	state.date = `${year}/${month}/${day}`;
-	state.time = hour + ':' + minutes;
-	state.isAM = myDate.getHours() <= 12;
+	if (widgetPrefsStore.dateFormat === 'MM/DD/YYYY') {
+		state.date = `${month}/${day}/${year}`;
+	} else if (widgetPrefsStore.dateFormat === 'MM/DD/YY') {
+		state.date = `${month}/${day}/${year.slice(-2)}`;
+	} else {
+		state.date = `${year}/${month}/${day}`;
+	}
+
+	if (widgetPrefsStore.timeFormat === '12h') {
+		const ampm = hours >= 12 ? 'PM' : 'AM';
+		const hour12 = hours % 12 || 12;
+		state.time = hour12.toString().padStart(2, '0') + ':' + minutes;
+		state.ampm = ampm;
+		state.isAM = hours < 12;
+	} else {
+		state.time = hours.toString().padStart(2, '0') + ':' + minutes;
+		state.ampm = '';
+		state.isAM = hours < 12;
+	}
+
 	state.show = false;
 	await nextTick();
 	state.show = true;
@@ -91,6 +142,7 @@ const watchTime = () => {
 };
 
 onMounted(() => {
+	widgetPrefsStore.init();
 	watchTime();
 	monitorStore.loadMonitor();
 });
@@ -115,6 +167,18 @@ onUnmounted(() => {
 			color: #ffffff;
 			line-height: 72px;
 			text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.16);
+			display: flex;
+			align-items: flex-end;
+			&.no-shadow {
+				text-shadow: none;
+			}
+			.description_ampm {
+				font-size: 20px;
+				font-weight: bold;
+				line-height: 1;
+				margin-left: 6px;
+				margin-bottom: 8px;
+			}
 		}
 		.description_daily {
 			display: flex;
@@ -130,6 +194,9 @@ onUnmounted(() => {
 					font-weight: bold;
 					color: #ffffff;
 					text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.16);
+					&.no-shadow {
+						text-shadow: none;
+					}
 				}
 				.description_day {
 					font-size: 12px;
@@ -137,6 +204,9 @@ onUnmounted(() => {
 					font-weight: 400;
 					color: #ffffff;
 					text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.16);
+					&.no-shadow {
+						text-shadow: none;
+					}
 				}
 			}
 		}
@@ -162,6 +232,9 @@ onUnmounted(() => {
 				line-height: 12px;
 				text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.16);
 				margin-left: 8px;
+				&.no-shadow {
+					text-shadow: none;
+				}
 			}
 		}
 	}
