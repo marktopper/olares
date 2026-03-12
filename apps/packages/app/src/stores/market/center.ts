@@ -567,35 +567,33 @@ export const useCenterStore = defineStore('marketCenter', {
 						this.calcMarketData();
 					}
 				}
-				if (!globalConfig.isOfficial) {
-					const data = await getMarketState();
-					if (data) {
-						this.calcLocationSourceAppStateInfo();
-						this.calcRemoteSourceAppStateInfo();
-					}
-
-					console.log('appStatusMap ===>', this.appStatusMap);
-
-					const settingStore = useSettingStore();
-					const otherSources = this.sources.filter(
-						(item) => item.id !== settingStore.marketSourceId
-					);
-					this.processSources(
-						otherSources,
-						'app_info_latest',
-						(currentSource, item) => {
-							if (item.app_simple_info) {
-								this.addFullInfoQueue(
-									item.app_simple_info.app_name,
-									currentSource.id,
-									false
-								);
-							}
-						}
-					);
-
-					console.log('appSimpleInfoMap ===>', this.appSimpleInfoMap);
+				const data = await getMarketState();
+				if (data) {
+					this.calcLocationSourceAppStateInfo();
+					this.calcRemoteSourceAppStateInfo();
 				}
+
+				console.log('appStatusMap ===>', this.appStatusMap);
+
+				const settingStore = useSettingStore();
+				const otherSources = this.sources.filter(
+					(item) => item.id !== settingStore.marketSourceId
+				);
+				this.processSources(
+					otherSources,
+					'app_info_latest',
+					(currentSource, item) => {
+						if (item.app_simple_info) {
+							this.addFullInfoQueue(
+								item.app_simple_info.app_name,
+								currentSource.id,
+								false
+							);
+						}
+					}
+				);
+
+				console.log('appSimpleInfoMap ===>', this.appSimpleInfoMap);
 			} catch (error) {
 				console.error('Failed to update market data:', error);
 			}

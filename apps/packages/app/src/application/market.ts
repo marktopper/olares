@@ -176,8 +176,8 @@ export class MarketApplication extends NormalApplication {
 				if (!globalConfig.isOfficial) {
 					const request = userStore.init();
 					request.get();
-					centerStore.fetchNewData();
 				}
+				centerStore.fetchNewData();
 			}
 		}
 	};
