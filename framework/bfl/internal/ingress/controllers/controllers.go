@@ -908,13 +908,13 @@ func getSettingsMap(app *v1alpha1App.Application, key string) (map[string]map[st
 }
 
 func getAppEntrancesHostName(entrances []v1alpha1App.Entrance, index int, appid string, appDomainConfigs []utils.DefaultThirdLevelDomainConfig) string {
-	if len(entrances) == 1 {
-		return appid
-	}
 	for _, adc := range appDomainConfigs {
 		if adc.EntranceName == entrances[index].Name && len(adc.ThirdLevelDomain) > 0 {
 			return adc.ThirdLevelDomain
 		}
+	}
+	if len(entrances) == 1 {
+		return appid
 	}
 
 	return fmt.Sprintf("%s%d", appid, index)

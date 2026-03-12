@@ -104,6 +104,12 @@ func (app *Application) GenEntranceURL(ctx context.Context) ([]Entrance, error) 
 		appid := AppName(app.Spec.Name).GetAppID()
 		if len(app.Spec.Entrances) == 1 {
 			app.Spec.Entrances[0].URL = fmt.Sprintf("%s.%s", appid, zone)
+			for _, adc := range appDomainConfigs {
+				if adc.AppName == app.Spec.Name && adc.EntranceName == app.Spec.Entrances[0].Name && len(adc.ThirdLevelDomain) > 0 {
+					app.Spec.Entrances[0].URL = fmt.Sprintf("%s.%s", adc.ThirdLevelDomain, zone)
+					break
+				}
+			}
 		} else {
 			for i := range app.Spec.Entrances {
 				app.Spec.Entrances[i].URL = fmt.Sprintf("%s%d.%s", appid, i, zone)

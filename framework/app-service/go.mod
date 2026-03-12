@@ -19,6 +19,7 @@ require (
 	github.com/go-logr/logr v1.4.3
 	github.com/go-openapi/spec v0.21.0
 	github.com/go-resty/resty/v2 v2.16.5
+	github.com/go-viper/mapstructure/v2 v2.4.0
 	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-getter v1.7.9
@@ -126,7 +127,6 @@ require (
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.1 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
-	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/gobwas/glob v0.2.4-0.20181002190808-e7a84e9525fe // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect

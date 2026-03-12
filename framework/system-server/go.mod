@@ -20,11 +20,8 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
 	github.com/jellydator/ttlcache/v3 v3.4.0
-	github.com/jmoiron/sqlx v1.4.0
 	github.com/labstack/echo/v4 v4.13.4
-	github.com/mattn/go-sqlite3 v1.14.30
 	github.com/oklog/run v1.2.0
-	github.com/prometheus/common v0.65.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.7
 	golang.org/x/crypto v0.41.0
@@ -93,6 +90,7 @@ require (
 	github.com/pquerna/cachecontrol v0.1.0 // indirect
 	github.com/prometheus/client_golang v1.22.0 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
+	github.com/prometheus/common v0.65.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
