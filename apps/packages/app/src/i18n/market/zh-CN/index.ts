@@ -200,11 +200,17 @@ export default {
 	'Market Source': '市场来源',
 	'Choose a remote market source to retrieve application information.':
 		'选择一个远端市场来源用于获取应用程序内容。',
+	'All configured sources are active. Apps from each source are available in the market. Set a source as primary to use its editorial content on the home page.':
+		'所有已配置的来源均处于活动状态。每个来源的应用都可在市场中获取。将某个来源设为主要来源，以使用其主页编辑内容。',
+	additional_sources_apps: '来自其他来源的应用',
 	'Source ID': '源 ID',
 	Description: '描述',
 	'Add Source': '添加源',
 	'Source Title': '源标题',
 	'Source URL': '源URL',
+	'Set as Primary Source': '设为主要来源',
+	'Are you sure you want to set this as the primary market source? The home page editorial content will be updated.':
+		'您确定要将此设为主要市场来源吗？首页的编辑内容将随之更新。',
 	'Change Source': '更换源',
 	'Are you sure you want to change the market sources? This might take some time to update.':
 		'您确定要更改市场来源吗？更新可能需要一些时间。',

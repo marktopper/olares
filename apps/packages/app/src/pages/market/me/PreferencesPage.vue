@@ -13,7 +13,7 @@
 						<div class="text-body2 text-ink-1 q-mt-md">
 							{{
 								t(
-									'Choose a remote market source to retrieve application information.'
+									'All configured sources are active. Apps from each source are available in the market. Set a source as primary to use its editorial content on the home page.'
 								)
 							}}
 						</div>

@@ -185,18 +185,49 @@
 						</template>
 					</app-store-body>
 				</template>
+
+				<!-- Apps from additional configured sources -->
+				<app-store-body
+					v-if="additionalSourceApps.length > 0"
+					:style="{
+						paddingLeft: paddingX + 'px',
+						paddingRight: paddingX + 'px'
+					}"
+					:show-body="true"
+					:label="t('additional_sources_apps')"
+					:bottom-separator="false"
+				>
+					<template v-slot:body>
+						<div
+							:class="
+								deviceStore.isMobile
+									? 'app-store-application-mobile'
+									: 'app-store-application'
+							"
+						>
+							<base-app-card
+								v-for="item in additionalSourceApps"
+								:key="item.sourceId + '_' + item.name"
+								:app-name="item.name"
+								:source-id="item.sourceId"
+							/>
+							<app-card-hide-border />
+						</div>
+					</template>
+				</app-store-body>
 			</div>
 		</template>
 	</page-container>
 </template>
 
 <script lang="ts" setup>
-import PageContainer from '../../../components/base/PageContainer.vue';
-import AppStoreSwiper from '../../../components/base/AppStoreSwiper.vue';
+import AppCardHideBorder from '../../../components/appcard/AppCardHideBorder.vue';
 import AppCardGrid from '../../../components/appcard/AppCardGrid.vue';
-import TopicAppView from '../../../components/topic/TopicAppView.vue';
-import AppStoreBody from '../../../components/base/AppStoreBody.vue';
 import BaseAppCard from '../../../components/appcard/BaseAppCard.vue';
+import AppStoreSwiper from '../../../components/base/AppStoreSwiper.vue';
+import AppStoreBody from '../../../components/base/AppStoreBody.vue';
+import PageContainer from '../../../components/base/PageContainer.vue';
+import TopicAppView from '../../../components/topic/TopicAppView.vue';
 import TopicView from '../../../components/topic/TopicView.vue';
 import { useDeviceStore } from '../../../stores/settings/device';
 import { useSettingStore } from '../../../stores/market/setting';
@@ -271,6 +302,14 @@ const pageData = computed(() => {
 	} else {
 		return data;
 	}
+});
+
+// Apps from non-primary remote sources for this category
+const additionalSourceApps = computed(() => {
+	if (centerStore.remoteSource.length <= 1) return [];
+	return centerStore
+		.getAppsForCategory(category)
+		.filter((app) => app.sourceId !== settingStore.marketSourceId);
 });
 
 const paddingX = computed(() => {

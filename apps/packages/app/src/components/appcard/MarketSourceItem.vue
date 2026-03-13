@@ -85,9 +85,9 @@ const onItemClick = () => {
 		return;
 	}
 	BtDialog.show({
-		title: t('Change Source'),
+		title: t('Set as Primary Source'),
 		message: t(
-			'Are you sure you want to change the market sources? This might take some time to update.'
+			'Are you sure you want to set this as the primary market source? The home page editorial content will be updated.'
 		),
 		okStyle: {
 			background: blue.value,
