@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useCenterStore } from 'src/stores/market/center';
-import globalConfig from 'src/api/market/config';
 
 export async function setNsfw(nsfw: boolean): Promise<boolean> {
 	try {
@@ -27,9 +26,6 @@ export async function getNsfw(): Promise<boolean> {
 }
 
 export async function getSettingConfig(): Promise<any> {
-	if (globalConfig.isOfficial) {
-		return { selected_source: 'market.olares' };
-	}
 	const store = useCenterStore();
 	const url = store.appUrl + '/settings/market-settings';
 	const { data } = await axios.get(url);

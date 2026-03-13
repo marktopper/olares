@@ -155,11 +155,17 @@ export default {
 	'Market Source': 'Market Source',
 	'Choose a remote market source to retrieve application information.':
 		'Choose a remote market source to retrieve application information.',
+	'All configured sources are active. Apps from each source are available in the market. Set a source as primary to use its editorial content on the home page.':
+		'All configured sources are active. Apps from each source are available in the market. Set a source as primary to use its editorial content on the home page.',
+	additional_sources_apps: 'Apps from Additional Sources',
 	'Source ID': 'Source ID',
 	Description: 'Description',
 	'Add Source': 'Add Source',
 	'Source Title': 'Source Title',
 	'Source URL': 'Source URL',
+	'Set as Primary Source': 'Set as Primary Source',
+	'Are you sure you want to set this as the primary market source? The home page editorial content will be updated.':
+		'Are you sure you want to set this as the primary market source? The home page editorial content will be updated.',
 	'Change Source': 'Change Source',
 	'Are you sure you want to change the market sources? This might take some time to update.':
 		'Are you sure you want to change the market sources? This might take some time to update.',

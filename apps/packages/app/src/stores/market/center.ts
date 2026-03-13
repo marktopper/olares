@@ -110,13 +110,16 @@ export const useCenterStore = defineStore('marketCenter', {
 		},
 		marketInstalledApps(state) {
 			const apps: string[] = [];
-			const settingStore = useSettingStore();
+			const centerStore = useCenterStore();
+			const remoteSourceIds = new Set(
+				centerStore.remoteSource.map((s) => s.id)
+			);
 			state.appStatusMap.forEach((statusLatest, combinedId) => {
 				if (!uninstalledApp(statusLatest.status)) {
 					const list = combinedId.split('_');
 					const sourceId = list[0];
 					const appName = list[1];
-					if (sourceId === settingStore.marketSourceId) {
+					if (remoteSourceIds.has(sourceId)) {
 						apps.push(appName);
 					}
 				}
@@ -567,35 +570,33 @@ export const useCenterStore = defineStore('marketCenter', {
 						this.calcMarketData();
 					}
 				}
-				if (!globalConfig.isOfficial) {
-					const data = await getMarketState();
-					if (data) {
-						this.calcLocationSourceAppStateInfo();
-						this.calcRemoteSourceAppStateInfo();
-					}
-
-					console.log('appStatusMap ===>', this.appStatusMap);
-
-					const settingStore = useSettingStore();
-					const otherSources = this.sources.filter(
-						(item) => item.id !== settingStore.marketSourceId
-					);
-					this.processSources(
-						otherSources,
-						'app_info_latest',
-						(currentSource, item) => {
-							if (item.app_simple_info) {
-								this.addFullInfoQueue(
-									item.app_simple_info.app_name,
-									currentSource.id,
-									false
-								);
-							}
-						}
-					);
-
-					console.log('appSimpleInfoMap ===>', this.appSimpleInfoMap);
+				const data = await getMarketState();
+				if (data) {
+					this.calcLocationSourceAppStateInfo();
+					this.calcRemoteSourceAppStateInfo();
 				}
+
+				console.log('appStatusMap ===>', this.appStatusMap);
+
+				const settingStore = useSettingStore();
+				const otherSources = this.sources.filter(
+					(item) => item.id !== settingStore.marketSourceId
+				);
+				this.processSources(
+					otherSources,
+					'app_info_latest',
+					(currentSource, item) => {
+						if (item.app_simple_info) {
+							this.addFullInfoQueue(
+								item.app_simple_info.app_name,
+								currentSource.id,
+								false
+							);
+						}
+					}
+				);
+
+				console.log('appSimpleInfoMap ===>', this.appSimpleInfoMap);
 			} catch (error) {
 				console.error('Failed to update market data:', error);
 			}
@@ -629,25 +630,30 @@ export const useCenterStore = defineStore('marketCenter', {
 		},
 		calcCategories() {
 			const data: string[] = [];
-			if (this.marketSource?.app_info_latest) {
-				this.marketSource?.app_info_latest.forEach((item) => {
-					if (
-						item.app_simple_info.categories &&
-						item.app_simple_info.categories.length > 0
-					) {
-						item.app_simple_info.categories.forEach((category) => {
-							if (!data.includes(category)) {
-								data.push(category);
-							}
-						});
-					} else {
-						console.log(item.app_simple_info);
-						console.error(
-							`item ${item.app_simple_info.app_name} categories empty`
-						);
-					}
-				});
-			}
+			// Collect categories from ALL configured remote sources
+			this.remoteSource.forEach((source) => {
+				const sourceData =
+					this.marketData?.user_data?.sources[source.id];
+				if (sourceData?.app_info_latest) {
+					sourceData.app_info_latest.forEach((item) => {
+						if (
+							item.app_simple_info.categories &&
+							item.app_simple_info.categories.length > 0
+						) {
+							item.app_simple_info.categories.forEach((category) => {
+								if (!data.includes(category)) {
+									data.push(category);
+								}
+							});
+						} else {
+							console.log(item.app_simple_info);
+							console.error(
+								`item ${item.app_simple_info.app_name} categories empty`
+							);
+						}
+					});
+				}
+			});
 			const menuStore = useMenuStore();
 			menuStore.appCategories = data;
 			console.log('app category ===>', menuStore.appCategories);
@@ -825,6 +831,44 @@ export const useCenterStore = defineStore('marketCenter', {
 					});
 				}
 			}
+		},
+		getAppsForCategory(
+			category: string
+		): { name: string; sourceId: string }[] {
+			const settingStore = useSettingStore();
+			const seen = new Set<string>();
+			const result: { name: string; sourceId: string }[] = [];
+
+			// Primary source first for deduplication (primary source wins on name collision)
+			const orderedSources = [
+				...this.remoteSource.filter(
+					(s) => s.id === settingStore.marketSourceId
+				),
+				...this.remoteSource.filter(
+					(s) => s.id !== settingStore.marketSourceId
+				)
+			];
+
+			orderedSources.forEach((source) => {
+				const prefix = source.id + '_';
+				this.appSimpleInfoMap.forEach((simpleLatest, combinedId) => {
+					if (!combinedId.startsWith(prefix)) return;
+					const appName = combinedId.slice(prefix.length);
+					if (seen.has(appName)) return;
+					const appInfo = simpleLatest.app_simple_info;
+					if (
+						category === 'All' ||
+						appInfo.categories?.some(
+							(c) => c.toLowerCase() === category.toLowerCase()
+						)
+					) {
+						seen.add(appName);
+						result.push({ name: appName, sourceId: source.id });
+					}
+				});
+			});
+
+			return result;
 		},
 
 		calcRemoteSourceSimpleAppInfo() {
